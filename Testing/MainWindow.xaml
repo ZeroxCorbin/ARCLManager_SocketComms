@@ -1,0 +1,55 @@
+﻿<Window x:Class="Testing.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Testing"
+        mc:Ignorable="d"
+        Title="MainWindow" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Closing="Window_Closing">
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+            <Button x:Name="btnConnectIO" Content="Connect" IsCancel="True" Click="BtnConnectIO_Click" VerticalContentAlignment="Center" Width="80" Margin="2"/>
+
+            <StackPanel>
+                <Button x:Name="btnInputs" Content="Inputs" Click="BtnInputs_Click" Height="26" VerticalContentAlignment="Center" Width="80" Margin="2"/>
+                <Button x:Name="btnOutputs" Content="Outputs" Click="BtnOutputs_Click" Height="26" VerticalContentAlignment="Center" Width="80" Margin="2"/>
+                <Label Content="Response" Height="26" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Margin="2"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBox x:Name="txtInputs" Text="10,0" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+                <TextBox x:Name="txtOutputs" Text="1,1111000011110000111100001111000011110000111100001111000011110000111100001111000011110000111100001111000011110000111100001111000011110000111100001111000011110000" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+                <TextBox x:Name="txtIOResponse"  IsReadOnly="True" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+
+            <Button x:Name="btnConnectEvents" Content="Connect" IsCancel="True" Click="BtnConnectEvents_Click" VerticalContentAlignment="Center" Margin="2" Width="80"/>
+
+            <StackPanel>
+                <Button x:Name="btnHealth" Content="Health" Click="BtnHealth_Click" Height="26" VerticalContentAlignment="Center" Margin="2" Width="80"/>
+                <Button x:Name="btnAtGoal" Content="@ Goal" Click="BtnAtGoal_Click" Height="26" VerticalContentAlignment="Center" Margin="2" Width="80"/>
+                <Button x:Name="btnLoaded" Content="Loaded" Click="BtnLoaded_Click" Height="26" VerticalContentAlignment="Center" Margin="2" Width="80"/>
+                <Button x:Name="btnUnloaded" Content="Unloaded" Click="BtnUnloaded_Click" Height="26" VerticalContentAlignment="Center" Margin="2" Width="80"/>
+                <Label Content="Response" Height="26" VerticalContentAlignment="Center" Margin="2" HorizontalContentAlignment="Right"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBox x:Name="txtHealth" Text="1,TOTE123,Goal1,0" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+                <TextBox x:Name="txtAtGoal" Text="10,TOTE123,Goal1,0" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+                <TextBox x:Name="txtLoaded" Text="12,TOTE123,Goal1,1" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+                <TextBox x:Name="txtUnloaded" Text="13,TOTE123,Goal2,1" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+                <TextBox x:Name="txtEventResponse" IsReadOnly="True" Height="26" VerticalContentAlignment="Center" Margin="2" MinWidth="180"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <Label x:Name="LblEMIOInSync" Content="EM IO InSync"/>
+            <Label x:Name="LblEMRobotsInSync" Content="EM Robots InSync"/>
+            <Label x:Name="LblPLCIOInSync" Content="PLC IO InSync"/>
+            <Label x:Name="LblPLCEventInSync" Content="PLC Event InSync"/>
+        </StackPanel>
+        <StackPanel Margin="0,10,0,0">
+            <Label Content="Events List"/>
+            <TextBox x:Name="txtEventList" VerticalScrollBarVisibility="Auto" IsReadOnly="True" IsReadOnlyCaretVisible="True" Height="180"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

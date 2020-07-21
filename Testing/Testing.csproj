@@ -98,6 +98,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ARCLManager\ARCLManager\ARCLManager.csproj">
+      <Project>{cf113a82-705d-44a1-a30f-1a8ef27c325b}</Project>
+      <Name>ARCLManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SocketManager\SocketManager.csproj">
+      <Project>{f6232c84-200c-4a2e-93a1-5dc8be661ebd}</Project>
+      <Name>SocketManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ARCLManager_SocketComms\ARCLManager_SocketComms.csproj">
       <Project>{7d11e689-d669-4c77-8815-34936e635745}</Project>
       <Name>ARCLManager_SocketComms</Name>

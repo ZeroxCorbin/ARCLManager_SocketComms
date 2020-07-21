@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARCLManager_SocketComms", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{0762497D-0B03-4E92-8CC0-611D6502EBAE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocketManager", "..\SocketManager\SocketManager.csproj", "{F6232C84-200C-4A2E-93A1-5DC8BE661EBD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARCLManager", "..\ARCLManager\ARCLManager\ARCLManager.csproj", "{CF113A82-705D-44A1-A30F-1A8EF27C325B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{0762497D-0B03-4E92-8CC0-611D6502EBAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0762497D-0B03-4E92-8CC0-611D6502EBAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0762497D-0B03-4E92-8CC0-611D6502EBAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6232C84-200C-4A2E-93A1-5DC8BE661EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6232C84-200C-4A2E-93A1-5DC8BE661EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6232C84-200C-4A2E-93A1-5DC8BE661EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6232C84-200C-4A2E-93A1-5DC8BE661EBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF113A82-705D-44A1-A30F-1A8EF27C325B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF113A82-705D-44A1-A30F-1A8EF27C325B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF113A82-705D-44A1-A30F-1A8EF27C325B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF113A82-705D-44A1-A30F-1A8EF27C325B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -42,8 +42,8 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-            <Label x:Name="LblEMIOInSync" Content="EM IO InSync"/>
-            <Label x:Name="LblEMRobotsInSync" Content="EM Robots InSync"/>
+            <Label x:Name="LblEmIOInSync" Content="Em IO InSync"/>
+            <Label x:Name="LblEmRobotsInSync" Content="Em Robots InSync"/>
             <Label x:Name="LblPLCIOInSync" Content="PLC IO InSync"/>
             <Label x:Name="LblPLCEventInSync" Content="PLC Event InSync"/>
         </StackPanel>

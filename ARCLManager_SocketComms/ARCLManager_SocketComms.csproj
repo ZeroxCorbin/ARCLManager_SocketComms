@@ -4,4 +4,9 @@
     <TargetFrameworks>netstandard2.1;net472</TargetFrameworks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\ARCLManager\ARCLManager\ARCLManager.csproj" />
+    <ProjectReference Include="..\..\SocketManager\SocketManager.csproj" />
+  </ItemGroup>
+
 </Project>

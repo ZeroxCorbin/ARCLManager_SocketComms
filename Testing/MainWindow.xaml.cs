@@ -31,7 +31,7 @@ namespace Testing
             ARCLManager_SocketComms.ToteUnloadComplete += ARCLManager_SocketComms_ToteUnloadComplete;
 
 #if TEST
-            ARCLManager_SocketComms.Debug(ARCLManager_SocketComms_EMIOInSync, ARCLManager_SocketComms_EMRobotsInSync, ARCLManager_SocketComms_IOInSync, ARCLManager_SocketComms_EVInSync);
+            ARCLManager_SocketComms.Debug(ARCLManager_SocketComms_EmIOInSync, ARCLManager_SocketComms_EmRobotsInSync, ARCLManager_SocketComms_IOInSync, ARCLManager_SocketComms_EVInSync);
             ARCLManager_SocketComms.Initialize("192.168.0.20:7171:adept", "127.0.0.1:10001", "127.0.0.1:10000");
 #else
             ARCLManager_SocketComms.Initialize("172.16.39.10:7171:adept", "172.16.39.9:10001", "172.16.39.9:10000");
@@ -66,15 +66,15 @@ namespace Testing
             }
         }
 
-        private void ARCLManager_SocketComms_EMIOInSync(object sender, bool data) => Dispatcher.BeginInvoke(DispatcherPriority.Render,
+        private void ARCLManager_SocketComms_EmIOInSync(object sender, bool data) => Dispatcher.BeginInvoke(DispatcherPriority.Render,
             (Action<bool>)((bool d) =>
             {
-                if (d) LblEMIOInSync.Background = Brushes.LightGreen; else LblEMIOInSync.Background = Brushes.LightSalmon;
+                if (d) LblEmIOInSync.Background = Brushes.LightGreen; else LblEmIOInSync.Background = Brushes.LightSalmon;
 
                 txtEventList.Text += $"ExtIO Sync: {d}\r\n";
             }), data);
-        private void ARCLManager_SocketComms_EMRobotsInSync(object sender, bool data) => Dispatcher.BeginInvoke(DispatcherPriority.Render,
-            (Action<bool>)((bool d) => { if (d) LblEMRobotsInSync.Background = Brushes.LightGreen; else LblEMRobotsInSync.Background = Brushes.LightSalmon; txtEventList.Text += $"Robots Sync: {d}\r\n"; }), data);
+        private void ARCLManager_SocketComms_EmRobotsInSync(object sender, bool data) => Dispatcher.BeginInvoke(DispatcherPriority.Render,
+            (Action<bool>)((bool d) => { if (d) LblEmRobotsInSync.Background = Brushes.LightGreen; else LblEmRobotsInSync.Background = Brushes.LightSalmon; txtEventList.Text += $"Robots Sync: {d}\r\n"; }), data);
         private void ARCLManager_SocketComms_IOInSync(object sender, bool data) => Dispatcher.BeginInvoke(DispatcherPriority.Render,
             (Action<bool>)((bool d) => { if (d) LblPLCIOInSync.Background = Brushes.LightGreen; else LblPLCIOInSync.Background = Brushes.LightSalmon; txtEventList.Text += $"PlcIO Sync: {d}\r\n"; }), data);
         private void ARCLManager_SocketComms_EVInSync(object sender, bool data) => Dispatcher.BeginInvoke(DispatcherPriority.Render,

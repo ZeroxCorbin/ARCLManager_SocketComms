@@ -17,75 +17,75 @@ namespace ARCLManager_SocketCommsNS
     {
         /// <summary>
         /// Set when calling Initialize().
-        /// EM IP Address:Port Number:ARCL Server Password
+        /// Em IP Address:Port Number:ARCL Server Password
         /// Initially string.Empty.
         /// </summary>
-        public string EMConString { get; private set; } = string.Empty;
+        public string EmConString { get; private set; } = string.Empty;
 
 
         /// <summary>
         /// Can only be attached calling Debug().
         /// </summary>
-        public delegate void EMIOInSyncUpdateEventHandler(object sender, bool data);
+        public delegate void EmIOInSyncUpdateEventHandler(object sender, bool data);
         /// <summary>
         /// Can only be attached calling Debug().
         /// </summary>
-        private event EMIOInSyncUpdateEventHandler EM_IOInSync;
+        private event EmIOInSyncUpdateEventHandler EmIO_InSync;
 
         /// <summary>
         /// Can only be attached calling Debug().
         /// </summary>
-        public delegate void EMRobotsInSyncUpdateEventHandler(object sender, bool data);
+        public delegate void EmRobotsInSyncUpdateEventHandler(object sender, bool data);
         /// <summary>
         /// Can only be attached calling Debug().
         /// </summary>
-        private event EMRobotsInSyncUpdateEventHandler EM_RobotsInSync;
+        private event EmRobotsInSyncUpdateEventHandler EmRobots_InSync;
         /// <summary>
         /// Can only be attached calling Debug().
         /// </summary>
-        public delegate void EMQueueInSyncUpdateEventHandler(object sender, bool data);
+        public delegate void EmQueueInSyncUpdateEventHandler(object sender, bool data);
         /// <summary>
         /// Can only be attached calling Debug().
         /// </summary>
-        private event EMQueueInSyncUpdateEventHandler EM_QueueInSync;
+        private event EmQueueInSyncUpdateEventHandler EmQueue_InSync;
 
         //Private
         private ARCLConnection Connection { get; set; }
 
-        private ExternalIOManager EM_IOManager { get; set; }
-        private QueueRobotManager EM_RobotsManager { get; set; }
-        public QueueJobManager EM_QueueManager { get; private set; }
+        private ExternalIOManager EmIO_Manager { get; set; }
+        private QueueRobotManager EmRobots_Manager { get; set; }
+        public QueueJobManager EmQueue_Manager { get; private set; }
 
-        public bool EM_IOIsSynced => (EM_IOManager == null) ? false : EM_IOManager.IsSynced;
-        public bool EM_RobotsIsSynced => (EM_RobotsManager == null) ? false : EM_RobotsManager.IsSynced;
-        public bool EM_QueueIsSynced => (EM_QueueManager == null) ? false : EM_QueueManager.IsSynced;
+        public bool EmIO_IsSynced => (EmIO_Manager == null) ? false : EmIO_Manager.IsSynced;
+        public bool EmRobots_IsSynced => (EmRobots_Manager == null) ? false : EmRobots_Manager.IsSynced;
+        public bool EmQueue_IsSynced => (EmQueue_Manager == null) ? false : EmQueue_Manager.IsSynced;
 
-        public bool EM_RobotAvailable => (EM_RobotsManager == null) ? false : EM_RobotsManager.IsRobotAvailable;
+        public bool Em_RobotAvailable => (EmRobots_Manager == null) ? false : EmRobots_Manager.IsRobotAvailable;
         /// <summary>
-        /// All systems lists IsSynced = EMIOIsSynced & EMRobotsIsSynced & IOIsSynced & EVIsSynced
+        /// All systems lists IsSynced = EmIOIsSynced & EmRobotsIsSynced & IOIsSynced & EVIsSynced
         /// </summary>
-        public bool IsSynced => EM_IOIsSynced & EM_RobotsIsSynced & Socket_IOInSync & Socket_EventInSync;
+        public bool IsSynced => EmIO_IsSynced & EmRobots_IsSynced & SocketIO_InSync & SocketEvent_InSync;
 
         /// <summary>
         /// Start the three main threads.
         /// Store the connection strings for reconnection attempts.
         /// </summary>
-        /// <param name="emConString">EM IP Address:Port Number:ARCL Server Password</param>
-        /// <param name="plcIOConString">Bind IP Address for Socket IO Server:Port number to listen on.</param>
-        /// <param name="plcEventConString">Bind IP Address for Socket Event Server:Port number to listen on.</param>
-        public void Initialize(string emConString, string plcIOConString, string plcEventConString)
+        /// <param name="emConString">Em IP Address:Port Number:ARCL Server Password</param>
+        /// <param name="socketIOConString">Bind IP Address for Socket IO Server:Port number to listen on.</param>
+        /// <param name="socketEventConString">Bind IP Address for Socket Event Server:Port number to listen on.</param>
+        public void Initialize(string emConString, string socketIOConString, string socketEventConString)
         {
-            EMConString = emConString;
-            Socket_IOConString = plcIOConString;
-            Socket_EventConString = plcEventConString;
+            EmConString = emConString;
+            SocketIO_ConString = socketIOConString;
+            SocketEvent_ConString = socketEventConString;
 
-            this.Queue(true, new Action(() => Socket_IORestart()));
-            this.Queue(true, new Action(() => Socket_EventRestart()));
-            this.Queue(true, new Action(() => EM_Restart()));
+            this.Queue(true, new Action(() => SocketIO_Restart()));
+            this.Queue(true, new Action(() => SocketEvent_Restart()));
+            this.Queue(true, new Action(() => Em_Restart()));
 
-            //ThreadPool.QueueUserWorkItem(new WaitCallback(Socket_IORestart));
-            //ThreadPool.QueueUserWorkItem(new WaitCallback(Socket_EventRestart));
-            //ThreadPool.QueueUserWorkItem(new WaitCallback(EM_Restart));
+            //ThreadPool.QueueUserWorkItem(new WaitCallback(SocketIO_Restart));
+            //ThreadPool.QueueUserWorkItem(new WaitCallback(SocketEvent_Restart));
+            //ThreadPool.QueueUserWorkItem(new WaitCallback(Em_Restart));
         }
         /// <summary>
         /// Shutdown all threads and active connections.
@@ -94,8 +94,8 @@ namespace ARCLManager_SocketCommsNS
         {
             ConnectionCleanup();
 
-            Socket_EventListenerCleanup();
-            Socket_IOListenerCleanup();
+            SocketEvent_ListenerCleanup();
+            SocketIO_ListenerCleanup();
         }
         /// <summary>
         /// Response to the Socket from the HealthCheck event.
@@ -103,18 +103,18 @@ namespace ARCLManager_SocketCommsNS
         /// <param name="response">HealthCheckEventArgs from the HealthCheck event, with the Valid bit set correctly.</param>
         /// <returns>The message was sent.</returns>
 
-        public void Debug(EMIOInSyncUpdateEventHandler eM_IOInSync, EMRobotsInSyncUpdateEventHandler eM_RobotsInSync, IOInSyncUpdateEventHandler pLC_IOInSyncEvent, Socket_EventIsSyncedUpdateEventHandler pLC_EventInSyncEvent)
+        public void Debug(EmIOInSyncUpdateEventHandler em_IOInSync, EmRobotsInSyncUpdateEventHandler em_RobotsInSync, IOInSyncUpdateEventHandler socketIO_InSyncEvent, SocketEvent_IsSyncedUpdateEventHandler socketEvent_InSyncEvent)
         {
-            EM_IOInSync += eM_IOInSync;
-            EM_RobotsInSync += eM_RobotsInSync;
-            Socket_IOInSyncEvent += pLC_IOInSyncEvent;
-            Socket_EventInSyncEvent += pLC_EventInSyncEvent;
+            EmIO_InSync += em_IOInSync;
+            EmRobots_InSync += em_RobotsInSync;
+            SocketIO_InSyncEvent += socketIO_InSyncEvent;
+            SocketEvent_InSyncEvent += socketEvent_InSyncEvent;
         }
 
-        //------------------------- EM Comms
-        private void EM_Restart()
+        //------------------------- Em Comms
+        private void Em_Restart()
         {
-            Connection = new ARCLConnection(EMConString);
+            Connection = new ARCLConnection(EmConString);
             Connection.ConnectState += Connection_ConnectState;
             Connection.Connect();
         }
@@ -149,57 +149,37 @@ namespace ARCLManager_SocketCommsNS
                         {"20", new ExtIOSet("20", new List<byte>{ 0 }, new List<byte>{ 0 }) }
                     };
 
-                EM_IOManager = new ExternalIOManager(Connection, IOList);
-                EM_IOManager.InSync += EM_IOManager_InSync;
-                EM_IOManager.Start();
+                EmIO_Manager = new ExternalIOManager(Connection, IOList);
+                EmIO_Manager.InSync += EmIO_Manager_InSync;
+                EmIO_Manager.Start();
 
-                EM_RobotsManager = new QueueRobotManager(Connection);
-                EM_RobotsManager.InSync += EM_RobotsManager_InSync;
-                EM_RobotsManager.Start();
+                EmRobots_Manager = new QueueRobotManager(Connection);
+                EmRobots_Manager.InSync += EmRobots_Manager_InSync;
+                EmRobots_Manager.Start();
 
-                EM_QueueManager = new QueueJobManager(Connection);
-                EM_QueueManager.InSync += EM_QueueManager_InSync;
-                EM_QueueManager.Start();
+                EmQueue_Manager = new QueueJobManager(Connection);
+                EmQueue_Manager.InSync += EmQueue_Manager_InSync;
+                EmQueue_Manager.Start();
             }
             else
             {
                 ConnectionCleanup();
-                this.Queue(true, new Action(() => EM_Restart()));
+                this.Queue(true, new Action(() => Em_Restart()));
             }
         }
 
-        private void EM_RobotsManager_InSync(object sender, bool data) => EM_RobotsInSync?.Invoke(sender, data);
-        private void EM_QueueManager_InSync(object sender, bool data) => EM_QueueInSync?.Invoke(sender, data);
+        private void EmRobots_Manager_InSync(object sender, bool data) => EmRobots_InSync?.Invoke(sender, data);
+        private void EmQueue_Manager_InSync(object sender, bool data) => EmQueue_InSync?.Invoke(sender, data);
 
         private void Connection_QueueUpdate(object sender, QueueManagerJobSegment data)
         {
             if (data.Status == ARCLStatus.InProgress)
             {
                 if (data.SubStatus == ARCLSubStatus.AfterPickup)
-                {
-
-
-#if PARK
-                    SocketEventArgs args = new SocketEventArgs(data.ID, data.GoalName, int.Parse(data.RobotName));
-                    RobotAtGoal(args);
-                    this.Queue(false, new Action(() => ToteLoadComplete?.Invoke(this, args)));
-#else
                     RobotAtGoal(new SocketEventArgs(data.ID, data.GoalName, int.Parse(data.RobotName)));
-#endif
-                }
-
 
                 if (data.SubStatus == ARCLSubStatus.AfterDropoff)
-                {
-#if PARK
-                    SocketEventArgs args = new SocketEventArgs(data.ID, data.GoalName, int.Parse(data.RobotName));
-                    RobotAtGoal(args);
-                    this.Queue(false, new Action(() => ToteUnloadComplete?.Invoke(this, args)));
-#else
                     RobotAtGoal(new SocketEventArgs(data.ID, data.GoalName, int.Parse(data.RobotName)));
-#endif
-                }
-
             }
         }
 
@@ -211,31 +191,31 @@ namespace ARCLManager_SocketCommsNS
                 Connection.QueueJobUpdate -= Connection_QueueUpdate;
             }
 
-            if (EM_RobotsManager != null)
+            if (EmRobots_Manager != null)
             {
-                EM_RobotsManager.InSync -= EM_RobotsManager_InSync;
-                EM_RobotsManager.Stop();
-                EM_RobotsManager = null;
+                EmRobots_Manager.InSync -= EmRobots_Manager_InSync;
+                EmRobots_Manager.Stop();
+                EmRobots_Manager = null;
             }
-            this.Queue(false, new Action(() => EM_RobotsInSync?.Invoke(this, false)));
+            this.Queue(false, new Action(() => EmRobots_InSync?.Invoke(this, false)));
 
-            if (EM_IOManager != null)
+            if (EmIO_Manager != null)
             {
-                EM_IOManager.InSync -= EM_IOManager_InSync;
-                EM_IOManager.Stop();
+                EmIO_Manager.InSync -= EmIO_Manager_InSync;
+                EmIO_Manager.Stop();
                 
-                EM_IOManager = null;
+                EmIO_Manager = null;
             }
-            this.Queue(false, new Action(() => EM_IOInSync?.Invoke(this, false)));
+            this.Queue(false, new Action(() => EmIO_InSync?.Invoke(this, false)));
 
-            if (EM_QueueManager != null)
+            if (EmQueue_Manager != null)
             {
-                EM_QueueManager.InSync -= EM_QueueManager_InSync;
-                EM_QueueManager.Stop();
+                EmQueue_Manager.InSync -= EmQueue_Manager_InSync;
+                EmQueue_Manager.Stop();
 
-                EM_QueueManager = null;
+                EmQueue_Manager = null;
             }
-            this.Queue(false, new Action(() => EM_QueueInSync?.Invoke(this, false)));
+            this.Queue(false, new Action(() => EmQueue_InSync?.Invoke(this, false)));
 
             Connection?.Close();
             Connection?.Dispose();

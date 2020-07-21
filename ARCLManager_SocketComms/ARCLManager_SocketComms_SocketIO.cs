@@ -20,100 +20,100 @@ namespace ARCLManager_SocketCommsNS
         /// <summary>
         /// Can only be attached calling Debug().
         /// </summary>
-        private event IOInSyncUpdateEventHandler Socket_IOInSyncEvent;
+        private event IOInSyncUpdateEventHandler SocketIO_InSyncEvent;
 
         //Private Events
-        private delegate void Socket_IOProcessMessageEventHandler(object sender, SocketIOArgs data);
-        private event Socket_IOProcessMessageEventHandler Socket_IOProcessMessageEvent;
+        private delegate void SocketIO_ProcessMessageEventHandler(object sender, SocketIOArgs data);
+        private event SocketIO_ProcessMessageEventHandler SocketIO_ProcessMessageEvent;
 
-        private delegate void Socket_IOUpdateEMInputsEventHandler(SocketIOArgs data);
-        private event Socket_IOUpdateEMInputsEventHandler Socket_IOUpdateEMInputsEvent;
+        private delegate void SocketIO_UpdateEmInputsEventHandler(SocketIOArgs data);
+        private event SocketIO_UpdateEmInputsEventHandler SocketIO_UpdateEmInputsEvent;
 
-        private delegate void Socket_IOUpdateEMOutputsEventHandler();
-        private event Socket_IOUpdateEMOutputsEventHandler Socket_IOUpdateEMOutputsEvent;
+        private delegate void SocketIO_UpdateEmOutputsEventHandler();
+        private event SocketIO_UpdateEmOutputsEventHandler SocketIO_UpdateEmOutputsEvent;
 
         /// <summary>
         /// Set when calling Initialize().
         /// Bind IP Address for Socket IO Server:Port number to listen on.
         /// Initially string.Empty.
         /// </summary>
-        public string Socket_IOConString { get; private set; } = string.Empty;
+        public string SocketIO_ConString { get; private set; } = string.Empty;
 
-        public bool Socket_IOInSync { get; private set; } = false;
+        public bool SocketIO_InSync { get; private set; } = false;
 
-        private SocketManager Socket_IOListener { get; set; }
-        private SocketManager Socket_IOClient { get; set; }
+        private SocketManager SocketIO_Listener { get; set; }
+        private SocketManager SocketIO_Client { get; set; }
 
 
         //------------------------- Socket I/O Comms
-        private void Socket_IORestart()
+        private void SocketIO_Restart()
         {
-            Socket_IOListenerCleanup();
+            SocketIO_ListenerCleanup();
 
-            Socket_IOListener = new SocketManager(Socket_IOConString);
+            SocketIO_Listener = new SocketManager(SocketIO_ConString);
 
-            Socket_IOListener.ListenState += Socket_IOListener_ListenState;
-            Socket_IOListener.Error += Socket_IOListener_Error;
+            SocketIO_Listener.ListenState += SocketIO_Listener_ListenState;
+            SocketIO_Listener.Error += SocketIO_Listener_Error;
 
-            Socket_IOListener.Listen();
+            SocketIO_Listener.Listen();
         }
-        private void Socket_IOListener_ListenState(object sender, bool state)
+        private void SocketIO_Listener_ListenState(object sender, bool state)
         {
             if (state)
-                Socket_IOListener.ListenClientConnected += Socket_IOListener_ListenClientConnected;
+                SocketIO_Listener.ListenClientConnected += SocketIO_Listener_ListenClientConnected;
             else
-                Socket_IOListener.ListenClientConnected -= Socket_IOListener_ListenClientConnected;
+                SocketIO_Listener.ListenClientConnected -= SocketIO_Listener_ListenClientConnected;
         }
-        private void Socket_IOListener_ListenClientConnected(object sender, SocketManager.ListenClientConnectedEventArgs data)
+        private void SocketIO_Listener_ListenClientConnected(object sender, SocketManager.ListenClientConnectedEventArgs data)
         {
-            if (Socket_IOClient == null)
-                Socket_IOClient = new SocketManager(data.Client);
+            if (SocketIO_Client == null)
+                SocketIO_Client = new SocketManager(data.Client);
 
-            Socket_IOClient.DataReceived += Socket_IOClient_DataReceived;
-            Socket_IOClient.Error += Socket_IOClient_Error;
+            SocketIO_Client.DataReceived += SocketIO_Client_DataReceived;
+            SocketIO_Client.Error += SocketIO_Client_Error;
 
-            Socket_IOProcessMessageEvent += Socket_IOProcessMessage;
-            Socket_IOUpdateEMInputsEvent += ARCLManager_SocketComms_Socket_IOUpdateEMInputsEvent;
-            Socket_IOUpdateEMOutputsEvent += ARCLManager_SocketComms_Socket_IOUpdateEMOutputsEvent;
+            SocketIO_ProcessMessageEvent += SocketIO_ProcessMessage;
+            SocketIO_UpdateEmInputsEvent += ARCLManager_SocketComms_SocketIO_UpdateEmInputsEvent;
+            SocketIO_UpdateEmOutputsEvent += ARCLManager_SocketComms_SocketIO_UpdateEmOutputsEvent;
 
-            Socket_IOClient.ReceiveAsync("\x03");
+            SocketIO_Client.ReceiveAsync("\x03");
         }
-        private void Socket_IOListener_Error(object sender, Exception data) => this.Queue(false, new Action(() => Socket_IORestart()));
-        private void Socket_IOListenerCleanup()
+        private void SocketIO_Listener_Error(object sender, Exception data) => this.Queue(false, new Action(() => SocketIO_Restart()));
+        private void SocketIO_ListenerCleanup()
         {
-            if (Socket_IOListener != null)
+            if (SocketIO_Listener != null)
             {
-                Socket_IOListener.ListenState -= Socket_IOListener_ListenState;
-                Socket_IOListener.Error -= Socket_IOListener_Error;
-                Socket_IOListener.ListenClientConnected -= Socket_IOListener_ListenClientConnected;
+                SocketIO_Listener.ListenState -= SocketIO_Listener_ListenState;
+                SocketIO_Listener.Error -= SocketIO_Listener_Error;
+                SocketIO_Listener.ListenClientConnected -= SocketIO_Listener_ListenClientConnected;
             }
 
-            Socket_IOClientCleanup();
+            SocketIO_ClientCleanup();
 
-            Socket_IOListener?.StopListen();
-            Socket_IOListener?.Dispose();
-            Socket_IOListener = null;
+            SocketIO_Listener?.StopListen();
+            SocketIO_Listener?.Dispose();
+            SocketIO_Listener = null;
         }
 
         private bool WaitingForInputUpdate { get; set; } = false;
-        private void ARCLManager_SocketComms_Socket_IOUpdateEMInputsEvent(SocketIOArgs data)
+        private void ARCLManager_SocketComms_SocketIO_UpdateEmInputsEvent(SocketIOArgs data)
         {
             while (WaitingForOutputUpdate) { }
-            WaitingForInputUpdate = EM_IOManager.WriteAllInputs(data.IO);
+            WaitingForInputUpdate = EmIO_Manager.WriteAllInputs(data.IO);
         }
 
         private bool WaitingForOutputUpdate { get; set; } = false;
-        private void ARCLManager_SocketComms_Socket_IOUpdateEMOutputsEvent()
+        private void ARCLManager_SocketComms_SocketIO_UpdateEmOutputsEvent()
         {
             while (WaitingForInputUpdate) { }
-             WaitingForOutputUpdate = EM_IOManager.ReadAllOutputs();
+             WaitingForOutputUpdate = EmIO_Manager.ReadAllOutputs();
         }
 
-        private void EM_IOManager_InSync(object sender, bool state)
+        private void EmIO_Manager_InSync(object sender, bool state)
         {
-            EM_IOInSync?.Invoke(sender, state);
+            EmIO_InSync?.Invoke(sender, state);
 
-            if (Socket_IOClient == null) return;
+            if (SocketIO_Client == null) return;
 
             if (state)
             {
@@ -121,10 +121,10 @@ namespace ARCLManager_SocketCommsNS
 
                 if (WaitingForInputUpdate)
                 {
-                    for (int i = 1; i <= EM_IOManager.ActiveSets.Count(); i++)
-                        toSend.AddRange(EM_IOManager.ActiveSets[i.ToString()].Inputs);
+                    for (int i = 1; i <= EmIO_Manager.ActiveSets.Count(); i++)
+                        toSend.AddRange(EmIO_Manager.ActiveSets[i.ToString()].Inputs);
 
-                    Socket_IOClient.Write(new SocketIOArgs(toSend).GetSocketCommandString(2));
+                    SocketIO_Client.Write(new SocketIOArgs(toSend).GetSocketCommandString(2));
 
                     WaitingForInputUpdate = false;
 
@@ -133,10 +133,10 @@ namespace ARCLManager_SocketCommsNS
 
                 if (WaitingForOutputUpdate)
                 {
-                    for (int i = 1; i <= EM_IOManager.ActiveSets.Count(); i++)
-                        toSend.AddRange(EM_IOManager.ActiveSets[i.ToString()].Outputs);
+                    for (int i = 1; i <= EmIO_Manager.ActiveSets.Count(); i++)
+                        toSend.AddRange(EmIO_Manager.ActiveSets[i.ToString()].Outputs);
                         
-                    Socket_IOClient.Write(new SocketIOArgs(toSend).GetSocketCommandString(11));
+                    SocketIO_Client.Write(new SocketIOArgs(toSend).GetSocketCommandString(11));
 
                     WaitingForOutputUpdate = false;
 
@@ -145,7 +145,7 @@ namespace ARCLManager_SocketCommsNS
             }
         }
 
-        private void Socket_IOClient_DataReceived(object sender, string data)
+        private void SocketIO_Client_DataReceived(object sender, string data)
         {
             string[] spl = data.Trim('\x02').Split('\x03');
 
@@ -153,60 +153,60 @@ namespace ARCLManager_SocketCommsNS
             {
                 if (string.IsNullOrEmpty(s)) continue;
 
-                this.Queue(false, new Action(() => Socket_IOProcessMessageEvent?.Invoke(sender, new SocketIOArgs(s))));
+                this.Queue(false, new Action(() => SocketIO_ProcessMessageEvent?.Invoke(sender, new SocketIOArgs(s))));
             }
         }
-        private void Socket_IOProcessMessage(object sender, SocketIOArgs data)
+        private void SocketIO_ProcessMessage(object sender, SocketIOArgs data)
         {
-            if (EM_IOManager == null)//Not connected to EM
+            if (EmIO_Manager == null)//Not connected to Em
             {
-                Socket_IOClient.Write(data.GetSocketCommandString(data.Command + 2));
+                SocketIO_Client.Write(data.GetSocketCommandString(data.Command + 2));
                 return;
             }
-            else if (!EM_IOManager.IsSynced)//Not ready for IO updates.
+            else if (!EmIO_Manager.IsSynced)//Not ready for IO updates.
             {
-                Socket_IOClient.Write(data.GetSocketCommandString(data.Command + 2));
+                SocketIO_Client.Write(data.GetSocketCommandString(data.Command + 2));
                 return;
             }
 
-            if (!Socket_IOInSync)
+            if (!SocketIO_InSync)
             {
-                Socket_IOInSync = true;
-                this.Queue(false, new Action(() => Socket_IOInSyncEvent?.Invoke(this, true)));
+                SocketIO_InSync = true;
+                this.Queue(false, new Action(() => SocketIO_InSyncEvent?.Invoke(this, true)));
             }
 
             switch (data.Command)
             {
                 case 1: //Write Outputs
-                    this.Queue(false, new Action(() => Socket_IOUpdateEMInputsEvent?.Invoke(data)));
+                    this.Queue(false, new Action(() => SocketIO_UpdateEmInputsEvent?.Invoke(data)));
                     break;
                 case 10: //Read Inputs
-                    this.Queue(false, new Action(() => Socket_IOUpdateEMOutputsEvent?.Invoke()));
+                    this.Queue(false, new Action(() => SocketIO_UpdateEmOutputsEvent?.Invoke()));
                     break;
             }
         }
 
-        private void Socket_IOClient_Error(object sender, Exception data) => this.Queue(false, new Action(() => Socket_IOClientCleanup()));
-        private void Socket_IOClientCleanup()
+        private void SocketIO_Client_Error(object sender, Exception data) => this.Queue(false, new Action(() => SocketIO_ClientCleanup()));
+        private void SocketIO_ClientCleanup()
         {
-            Socket_IOProcessMessageEvent -= Socket_IOProcessMessage;
-            Socket_IOUpdateEMInputsEvent -= ARCLManager_SocketComms_Socket_IOUpdateEMInputsEvent;
-            Socket_IOUpdateEMOutputsEvent -= ARCLManager_SocketComms_Socket_IOUpdateEMOutputsEvent;
+            SocketIO_ProcessMessageEvent -= SocketIO_ProcessMessage;
+            SocketIO_UpdateEmInputsEvent -= ARCLManager_SocketComms_SocketIO_UpdateEmInputsEvent;
+            SocketIO_UpdateEmOutputsEvent -= ARCLManager_SocketComms_SocketIO_UpdateEmOutputsEvent;
 
-            if (Socket_IOInSync)
+            if (SocketIO_InSync)
             {
-                Socket_IOInSync = false;
-                Socket_IOInSyncEvent?.Invoke(this, false);
+                SocketIO_InSync = false;
+                SocketIO_InSyncEvent?.Invoke(this, false);
             }
 
-            if (Socket_IOClient == null) return;
+            if (SocketIO_Client == null) return;
 
-            Socket_IOClient.DataReceived -= Socket_IOClient_DataReceived;
-            Socket_IOClient.Error -= Socket_IOClient_Error;
+            SocketIO_Client.DataReceived -= SocketIO_Client_DataReceived;
+            SocketIO_Client.Error -= SocketIO_Client_Error;
 
-            Socket_IOClient.Close();
-            Socket_IOClient.Dispose();
-            Socket_IOClient = null;
+            SocketIO_Client.Close();
+            SocketIO_Client.Dispose();
+            SocketIO_Client = null;
         }
     }
 }

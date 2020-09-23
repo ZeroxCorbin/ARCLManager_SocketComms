@@ -6,7 +6,7 @@ namespace ARCLManager_SocketCommsNS
 {
     public partial class ARCLManager_SocketComms
     {
-        private string MessageTerminatorString { get; } = "\x03";
+        private char MessageTerminatorString { get; } = '\x03';
         private List<char> MessageTrimChars { get; } = new List<char>() { '\x02' };
         private char MessageSplitChar { get; } = '\x03';
 

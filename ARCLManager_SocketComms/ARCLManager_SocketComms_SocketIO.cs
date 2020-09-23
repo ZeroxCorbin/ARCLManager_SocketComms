@@ -76,7 +76,7 @@ namespace ARCLManager_SocketCommsNS
             SocketIO_UpdateEmInputsEvent += ARCLManager_SocketComms_SocketIO_UpdateEmInputsEvent;
             SocketIO_UpdateEmOutputsEvent += ARCLManager_SocketComms_SocketIO_UpdateEmOutputsEvent;
 
-            SocketIO_Client.StartReceiveAsync("\x03");
+            SocketIO_Client.StartReceiveAsync('\x03');
         }
         private void SocketIO_Listener_Error(object sender, Exception data) => this.Queue(false, new Action(() => SocketIO_Restart()));
         private void SocketIO_ListenerCleanup()

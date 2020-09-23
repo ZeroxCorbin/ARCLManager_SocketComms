@@ -130,7 +130,7 @@ namespace ARCLManager_SocketCommsNS
 
             SocketEvent_ProcessMessageEvent += SocketEvent_ProcessMessage;
 
-            SocketEvent_Client.ReceiveAsync(MessageTerminatorString);
+            SocketEvent_Client.StartReceiveAsync(MessageTerminatorString);
         }
         private void SocketEvent_Listener_Error(object sender, Exception data) => this.Queue(false, new Action(() => SocketEvent_Restart()));
         private void SocketEvent_ListenerCleanup()

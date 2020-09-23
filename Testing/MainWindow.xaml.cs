@@ -100,7 +100,7 @@ namespace Testing
                 if (IOSocket.Connect())
                 {
                     IOSocket.DataReceived += IOSocket_DataReceived;
-                    IOSocket.ReceiveAsync();
+                    IOSocket.StartReceiveAsync();
                 }
             }
             else
@@ -137,7 +137,7 @@ namespace Testing
                 if (EventSocket.Connect())
                 {
                     EventSocket.DataReceived += EventSocket_DataReceived;
-                    EventSocket.ReceiveAsync();
+                    EventSocket.StartReceiveAsync();
                 }
             }
             else

@@ -76,7 +76,7 @@ namespace ARCLManager_SocketCommsNS
             SocketIO_UpdateEmInputsEvent += ARCLManager_SocketComms_SocketIO_UpdateEmInputsEvent;
             SocketIO_UpdateEmOutputsEvent += ARCLManager_SocketComms_SocketIO_UpdateEmOutputsEvent;
 
-            SocketIO_Client.ReceiveAsync("\x03");
+            SocketIO_Client.StartReceiveAsync("\x03");
         }
         private void SocketIO_Listener_Error(object sender, Exception data) => this.Queue(false, new Action(() => SocketIO_Restart()));
         private void SocketIO_ListenerCleanup()
@@ -98,8 +98,12 @@ namespace ARCLManager_SocketCommsNS
         private bool WaitingForInputUpdate { get; set; } = false;
         private void ARCLManager_SocketComms_SocketIO_UpdateEmInputsEvent(SocketIOArgs data)
         {
+            for (int i = 1; i <= EmIO_Manager.ActiveSets.Count(); i++)
+                EmIO_Manager.ActiveSets[i.ToString()].Inputs = new List<byte>() { data.IO[i - 1] };
+
             while (WaitingForOutputUpdate) { }
-            WaitingForInputUpdate = EmIO_Manager.WriteAllInputs(data.IO);
+
+            WaitingForInputUpdate = EmIO_Manager.WriteAllInputs();
         }
 
         private bool WaitingForOutputUpdate { get; set; } = false;
